@@ -4,9 +4,8 @@ import './App.css'
 function App() {
   const [inputNumber, setInputNumber] = useState<number>(0)
   const [calculations, setCalculations] = useState<string>("")
-  const [character, setCharacter] = useState("")
   const allowedCharacters = ["1", "2", "3", "4", "5", "6", "7", "8", "9", "0"]
-  const allowedJoiners = ["+", "/", "*", "-"]
+  const allowedJoiners = ["+", "/", "*", "-", "%"]
   function handleInputNumber(event :React.ChangeEvent<HTMLInputElement>) {
     try{
       setInputNumber(Number(event.target.value))
@@ -20,6 +19,13 @@ function App() {
   function handleNumberBtn(event: React.MouseEvent<HTMLButtonElement, MouseEvent>){
     //@ts-ignore
     setInputNumber(Number(event.target.innerText))
+    //@ts-ignore
+    setCalculations((prevShit) => `${prevShit} ${event.target.innerText}`)
+  }
+
+  function handleCharacterBtn(event: React.MouseEvent<HTMLButtonElement, MouseEvent>){
+    //@ts-ignore
+    setCalculations((prevShit) => `${prevShit} ${event.target.innerText}`)
   }
 
   function handleCBtn(){
@@ -32,26 +38,23 @@ function App() {
   }
 
   function handleInput(key: React.KeyboardEvent<HTMLDivElement>){
-    let changeKey = false
-    if(allowedCharacters.includes(key.key)){
-      changeKey = true
-    }
-    else if(!allowedCharacters.includes(key.key)){
-      changeKey = false
+    let firstNumber = true
+    if(allowedCharacters.includes(key.key) && firstNumber){
+      setInputNumber((prevCharacters) => Number(prevCharacters + key.key))
+      setCalculations((prevCalculations) => `${prevCalculations} ${inputNumber}`)
+      
     }
     if(allowedJoiners.includes(key.key)){
-      setCharacter(key.key)
-      setCalculations((prevCalculations) => `${prevCalculations} ${character}`)
+      setCalculations((prevCalculations) => `${prevCalculations} ${key.key}`)
     }
-    setInputNumber(changeKey ? (prevCharacters) => Number(prevCharacters + key.key) : (prevCharacters) => Number(prevCharacters))
-    setCalculations((prevCalculations) => `${prevCalculations} ${inputNumber}`)
-    changeKey = false
+    
   }
 
   function equal(){
     setInputNumber(eval(calculations))
+    setCalculations(eval(calculations))
   }
-  console.log(character)
+  console.log(calculations)
   console.log()
   return (
     <div id='App' onKeyDown={(key) => handleInput(key)}>
@@ -73,11 +76,11 @@ function App() {
       <button id="btn0" onClick={(event) => handleNumberBtn(event)}>0</button>
 
       {/* operations */}
-      <button id="division">/</button>
-      <button id="btnMultiply">*</button>
-      <button id="btnMinus">-</button>
-      <button id="btnPlus">+</button>
-      <button id="btnPercent">%</button>
+      <button id="division" onClick={(event) => handleCharacterBtn(event)}>/</button>
+      <button id="btnMultiply" onClick={(event) => handleCharacterBtn(event)}>*</button>
+      <button id="btnMinus" onClick={(event) => handleCharacterBtn(event)}>-</button>
+      <button id="btnPlus" onClick={(event) => handleCharacterBtn(event)}>+</button>
+      <button id="btnPercent" onClick={(event) => handleCharacterBtn(event)}>%</button>
       <button id="btnDBO">division by one</button>
       <button id="btnPower">power 2</button>
       <button id="btnSR">square root</button>
