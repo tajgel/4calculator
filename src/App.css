@@ -17,6 +17,11 @@
 
 }
 
+
+#App:focus{
+  outline: none;
+}
+
 #topCalc{
   grid-area: topCalc;
   display: flex;

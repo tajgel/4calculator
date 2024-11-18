@@ -1,66 +1,94 @@
-import { useState } from 'react'
+import { useState, useRef, useEffect } from 'react'
 import './App.css'
 
 function App() {
-  const [inputNumber, setInputNumber] = useState<number>(0)
+  const [inputNumber, setInputNumber] = useState<string>("")
   const [calculations, setCalculations] = useState<string>("")
+  const [firstNumber, setFirstNumber] = useState(true)
+  const [firstFirstNumber, setFirstFirstNumber] = useState(true)
   const allowedCharacters = ["1", "2", "3", "4", "5", "6", "7", "8", "9", "0"]
   const allowedJoiners = ["+", "/", "*", "-", "%"]
-  function handleInputNumber(event :React.ChangeEvent<HTMLInputElement>) {
-    try{
-      setInputNumber(Number(event.target.value))
+  const calcRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    // Automatically focus the div when the component mounts
+    if (calcRef.current) {
+      calcRef.current.focus();
     }
-    catch(error){
-      console.error()
-      setInputNumber(Number(0))
-    }
-  }
+  }, []);
 
   function handleNumberBtn(event: React.MouseEvent<HTMLButtonElement, MouseEvent>){
-    //@ts-ignore
-    setInputNumber(Number(event.target.innerText))
-    //@ts-ignore
-    setCalculations((prevShit) => `${prevShit} ${event.target.innerText}`)
+    if(firstFirstNumber){
+      //@ts-ignore
+      setInputNumber(event.target.innerText)
+      //@ts-ignore
+      setCalculations((prevCalculations) => prevCalculations + event.target.innerText)
+      setFirstFirstNumber(false)
+    }
+    else{
+      if(firstNumber){
+        //@ts-ignore
+        setInputNumber((prevNumber) => prevNumber + event.target.innerText)
+        //@ts-ignore
+        setCalculations((prevCalculations) => prevCalculations + event.target.innerText)
+      }
+      else{
+        //@ts-ignore
+        setInputNumber(event.target.innerText)
+        //@ts-ignore
+        setCalculations((prevCalculations) => prevCalculations + event.target.innerText)
+      }
+    }
+    setFirstNumber(true)
   }
 
   function handleCharacterBtn(event: React.MouseEvent<HTMLButtonElement, MouseEvent>){
     //@ts-ignore
-    setCalculations((prevShit) => `${prevShit} ${event.target.innerText}`)
+    setCalculations((prevCalculations) => prevCalculations + event.target.innerText)
+    setFirstNumber(false)
   }
 
   function handleCBtn(){
-    setInputNumber(0)
+    setInputNumber("0")
+    setFirstFirstNumber(true)
   }
 
   function handleCEBtn(){
-    setInputNumber(0)
+    setInputNumber("0")
     setCalculations("")
+    setFirstFirstNumber(true)
+  }
+
+  function handleDelete(){
+    setCalculations(calculations[calculations.length])
   }
 
   function handleInput(key: React.KeyboardEvent<HTMLDivElement>){
-    let firstNumber = true
-    if(allowedCharacters.includes(key.key) && firstNumber){
-      setInputNumber((prevCharacters) => Number(prevCharacters + key.key))
-      setCalculations((prevCalculations) => `${prevCalculations} ${inputNumber}`)
-      
+    if(allowedCharacters.includes(key.key)){
+      setCalculations((prevCalculations) => prevCalculations + key.key)
+      setFirstNumber(true)
     }
     if(allowedJoiners.includes(key.key)){
-      setCalculations((prevCalculations) => `${prevCalculations} ${key.key}`)
+      setCalculations((prevCalculations) => prevCalculations + key.key)
+      setFirstNumber(false)
     }
-    
+    if(firstNumber){
+      setInputNumber((prevCharacters) => prevCharacters + key.key)
+    }
   }
 
   function equal(){
+    console.log(eval(calculations))
     setInputNumber(eval(calculations))
     setCalculations(eval(calculations))
   }
   console.log(calculations)
   console.log()
   return (
-    <div id='App' onKeyDown={(key) => handleInput(key)}>
+    <div id='App' onKeyDown={(key) => handleInput(key)} tabIndex={0} ref={calcRef}>
       <div id='topCalc'>
         <p id='calculations'>{calculations}</p>
-        <div id='number' onChange={handleInputNumber}>{inputNumber}</div>
+        <div id='number'>{inputNumber}</div>
       </div>
       
       {/* numbers */}
@@ -88,7 +116,7 @@ function App() {
       {/* deletion options */}
       <button id="btnCE" onClick={handleCEBtn}>CE</button>
       <button id="btnC" onClick={handleCBtn}>C</button>
-      <button id="btnDelete">delte</button>
+      <button id="btnDelete" onClick={handleDelete}>delte</button>
 
       {/* diffrent shit */}
       <button id="btnPlusMinus">+-</button>
