@@ -48,6 +48,17 @@ function App() {
     setFirstNumber(false)
   }
 
+  function squareRoot(){
+    setInputNumber((number) => Math.sqrt(Number(number)).toString());
+    const currentNumber = Number(inputNumber);
+    const sqrtValue = Math.sqrt(currentNumber);
+    // setCalculations(() => {
+    //   let strinigger = calculations
+    //   console.log("some SHit")
+    //   return strinigger.slice(0, calculations.length - 1) + strinigger.slice(calculations.length, 1)
+    // })
+    setCalculations(sqrtValue.toString())
+  }
   function handleCBtn(){
     setInputNumber("0")
     setFirstFirstNumber(true)
@@ -78,12 +89,9 @@ function App() {
   }
 
   function equal(){
-    console.log(eval(calculations))
     setInputNumber(eval(calculations))
     setCalculations(eval(calculations))
   }
-  console.log(calculations)
-  console.log()
   return (
     <div id='App' onKeyDown={(key) => handleInput(key)} tabIndex={0} ref={calcRef}>
       <div id='topCalc'>
@@ -111,7 +119,7 @@ function App() {
       <button id="btnPercent" onClick={(event) => handleCharacterBtn(event)}>%</button>
       <button id="btnDBO">division by one</button>
       <button id="btnPower">power 2</button>
-      <button id="btnSR">square root</button>
+      <button id="btnSR" onClick={squareRoot}>square root</button>
 
       {/* deletion options */}
       <button id="btnCE" onClick={handleCEBtn}>CE</button>
